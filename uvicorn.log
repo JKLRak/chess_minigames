@@ -1,0 +1,49 @@
+nohup: zignorowane dane wejściowe
+INFO:     Started server process [255231]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:54294 - "HEAD /api/daily/today HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:56434 - "GET /api/daily/today HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56434 - "GET /api/daily/today HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34804 - "GET /api/daily/today HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34804 - "OPTIONS /api/daily/today/guess/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34804 - "POST /api/daily/today/guess/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33204 - "OPTIONS /api/daily/today/guess/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33204 - "POST /api/daily/today/guess/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34780 - "OPTIONS /api/daily/today/guess/3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34780 - "POST /api/daily/today/guess/3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59678 - "OPTIONS /api/daily/today/guess/4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59678 - "POST /api/daily/today/guess/4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58156 - "GET /api/daily/today/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54636 - "GET /api/daily/today HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54636 - "OPTIONS /api/daily/today/guess/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54636 - "POST /api/daily/today/guess/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40902 - "OPTIONS /api/daily/today/guess/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40902 - "POST /api/daily/today/guess/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60840 - "OPTIONS /api/daily/today/guess/3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60840 - "POST /api/daily/today/guess/3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46996 - "OPTIONS /api/daily/today/guess/4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46996 - "POST /api/daily/today/guess/4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46996 - "GET /api/daily/today/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41742 - "GET /api/daily/today HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41742 - "OPTIONS /api/daily/today/guess/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41742 - "POST /api/daily/today/guess/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60532 - "OPTIONS /api/daily/today/guess/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60532 - "POST /api/daily/today/guess/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43778 - "OPTIONS /api/daily/today/guess/3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43778 - "POST /api/daily/today/guess/3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53238 - "OPTIONS /api/daily/today/guess/4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53238 - "POST /api/daily/today/guess/4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53238 - "GET /api/daily/today/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56400 - "GET /api/daily/today HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54044 - "OPTIONS /api/daily/today/guess/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54044 - "POST /api/daily/today/guess/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57864 - "OPTIONS /api/daily/today/guess/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57864 - "POST /api/daily/today/guess/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40844 - "OPTIONS /api/daily/today/guess/3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40844 - "POST /api/daily/today/guess/3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33810 - "OPTIONS /api/daily/today/guess/4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33810 - "POST /api/daily/today/guess/4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33810 - "GET /api/daily/today/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57592 - "GET /api/daily/today HTTP/1.1" 200 OK
