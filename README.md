@@ -4,13 +4,13 @@ A full-stack chess web application featuring missing piece deduction and master 
 
 ## Game Modes
 
-- **Daily Gauntlet**: 4 progressive levels of missing piece deduction from active master games (hiding 1, 2, 3, and 4 pieces). Includes a global score distribution comparing your score against all players who completed today's challenge.
-- **Guess the Move**: Endless streak challenge predicting moves played in 2000+ Elo rated games. Decoy moves are generated via lightweight strategic heuristics without chess engine latency.
+- **Daily Gauntlet**: 4 progressive levels of missing piece deduction from active master games (hiding 1, 2, 3, and 4 pieces)
+- **Guess the Move**: Endless streak challenge predicting moves played in 2000+ Elo rated games. Decoy moves are generated via heuristic without chess engine
 
 ## Tech Stack
 
-- **Backend**: Python 3.10+, FastAPI, PostgreSQL, SQLAlchemy 2.0 (async), asyncpg, python-chess, httpx.
-- **Frontend**: React 19, TypeScript, Vite, pure CSS with custom piece SVGs (tournament theme, zero bloated component libraries).
+- **Backend**: Python 3.10+, FastAPI, PostgreSQL, SQLAlchemy 2.0 (async), asyncpg, python-chess, http
+- **Frontend**: React 19, TypeScript, Vite, pure CSS with custom piece SVGs (tournament theme)
 
 ## Architecture Highlights
 
@@ -42,32 +42,6 @@ npm install
 npm run dev
 ```
 Open `http://localhost:5173` in your browser.
-
-## Quality & Verification
-
-```bash
-# Frontend type check & linting
-cd frontend
-./node_modules/.bin/tsc -b
-./node_modules/.bin/oxlint
-
-# Frontend production build
-npm run build
-
-# Python syntax check
-cd backend
-python3 -m py_compile app/*.py
-```
-
-## LLM Codebase Export
-
-To bundle the entire codebase into a single clean file for AI ingestion (Gemini, Claude, GPT):
-```bash
-python3 scripts/bundle_project.py
-```
-Outputs:
-- `chess_project_bundle.md`: Formatted Markdown with directory tree and highlighted source code.
-- `chess_project.zip`: Clean zip archive excluding virtual environments and build outputs.
 
 ## License
 
