@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, JSON, UniqueConstraint
+from sqlalchemy import Column, String, Integer, JSON, Float, UniqueConstraint
 from .database import Base
 
 class DailyChallenge(Base):
@@ -21,3 +21,12 @@ class DailyGuess(Base):
     __table_args__ = (
         UniqueConstraint('date_id', 'level_id', 'ip_hash', name='uq_daily_guess'),
     )
+
+class MovePuzzleAnswer(Base):
+    __tablename__ = "move_puzzle_answers"
+
+    puzzle_id = Column(String, primary_key=True, index=True)
+    correct_move = Column(String, nullable=False)
+    game_info = Column(JSON, nullable=False)
+    created_at = Column(Float, nullable=False, index=True)
+

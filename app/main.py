@@ -1,17 +1,19 @@
 from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timezone
-from typing import Dict, Any
+from typing import Dict
 from copy import deepcopy
 import hashlib
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
-from sqlalchemy import func
+from sqlalchemy import select, text
+from sqlalchemy.exc import IntegrityError
 
 from .config import settings
 from .database import init_db, get_db
 from .db_models import DailyGuess, DailyChallenge
 from .challenge import get_or_create_daily_gauntlet
+from .move_puzzle import generate_move_puzzle, store_puzzle_answer, get_puzzle_answer
+from .lichess import lichess_client
 
 from contextlib import asynccontextmanager
 
@@ -19,12 +21,13 @@ from contextlib import asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
     yield
+    await lichess_client.close()
 
-app = FastAPI(title="Lichess Piece Guess API", lifespan=lifespan)
+app = FastAPI(title="Chess Piece Guess API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Fine for early dev
+    allow_origins=settings.backend_cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -58,6 +61,12 @@ async def get_daily_gauntlet(db: AsyncSession = Depends(get_db)):
 
 @app.post("/api/daily/today/guess/{level}")
 async def submit_daily_guess(level: int, user_answers: Dict[str, str], request: Request, db: AsyncSession = Depends(get_db)):
+    if level < 1 or level > 4:
+        raise HTTPException(status_code=400, detail="Level must be between 1 and 4")
+
+    if len(user_answers) > 64:
+        raise HTTPException(status_code=400, detail="Too many answer keys provided")
+
     date_str = get_today_str()
     
     # 1. Fetch from DB
@@ -87,7 +96,7 @@ async def submit_daily_guess(level: int, user_answers: Dict[str, str], request: 
     ip = request.client.host if request.client else "unknown"
     ip_hash = hashlib.sha256(ip.encode()).hexdigest()
     
-    # 4. Save to DB asynchronously (upsert/ignore constraint is tricky, we check first)
+    # 4. Save to DB asynchronously
     existing = await db.execute(select(DailyGuess).where(
         DailyGuess.date_id == date_str,
         DailyGuess.level_id == level,
@@ -95,10 +104,22 @@ async def submit_daily_guess(level: int, user_answers: Dict[str, str], request: 
     ))
     has_guessed = existing.scalars().first()
     
-    if not has_guessed:
-        new_guess = DailyGuess(date_id=date_str, level_id=level, ip_hash=ip_hash, score=score)
-        db.add(new_guess)
+    if has_guessed:
+        # Return previously recorded score to keep client and database distribution in sync
+        return {
+            "score": has_guessed.score,
+            "max_score": level,
+            "results": results,
+            "actual_answers": answers,
+            "already_submitted": True,
+        }
+
+    new_guess = DailyGuess(date_id=date_str, level_id=level, ip_hash=ip_hash, score=score)
+    db.add(new_guess)
+    try:
         await db.commit()
+    except IntegrityError:
+        await db.rollback()
     
     # 5. Return basic results
     return {
@@ -125,7 +146,6 @@ async def get_daily_stats(request: Request, db: AsyncSession = Depends(get_db)):
     
     # Global distribution query utilizing PostgreSQL capabilities
     # Find all users who completed the gauntlet (exactly 4 levels guessed today)
-    from sqlalchemy import text
     query = text("""
         SELECT sum_score, COUNT(*) as count 
         FROM (
@@ -151,4 +171,47 @@ async def get_daily_stats(request: Request, db: AsyncSession = Depends(get_db)):
         "user_total": user_total,
         "total_players": total_players,
         "distribution": distribution
+    }
+
+# ---------------------------------------------------------------------------
+# Guess the Move endpoints
+# ---------------------------------------------------------------------------
+
+@app.get("/api/move-guess/puzzle")
+async def get_move_puzzle(db: AsyncSession = Depends(get_db)):
+    try:
+        puzzle = await generate_move_puzzle()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to generate move puzzle")
+
+    # Store correct answer server-side
+    await store_puzzle_answer(db, puzzle["puzzle_id"], puzzle["correct_move"], puzzle["game_info"])
+
+    # Return puzzle WITHOUT the correct answer
+    return {
+        "puzzle_id": puzzle["puzzle_id"],
+        "fen": puzzle["fen"],
+        "side_to_move": puzzle["side_to_move"],
+        "move_a": puzzle["move_a"],
+        "move_b": puzzle["move_b"],
+    }
+
+@app.post("/api/move-guess/answer/{puzzle_id}")
+async def submit_move_answer(puzzle_id: str, body: Dict[str, str], db: AsyncSession = Depends(get_db)):
+    chosen = body.get("chosen_move")
+    if not chosen:
+        raise HTTPException(status_code=400, detail="Missing 'chosen_move' field")
+
+    answer_data = await get_puzzle_answer(db, puzzle_id)
+    if answer_data is None:
+        raise HTTPException(status_code=404, detail="Puzzle expired or not found")
+
+    correct_move = answer_data["correct_move"]
+    is_correct = chosen == correct_move
+
+    return {
+        "correct": is_correct,
+        "correct_move": correct_move,
+        "chosen_move": chosen,
+        "game_info": answer_data.get("game_info"),
     }
